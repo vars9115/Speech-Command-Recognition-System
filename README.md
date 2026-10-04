@@ -1,0 +1,2 @@
+# Speech Command Recognition System
+Speech Command Recognition System is an AI-based application that recognizes spoken commands and converts them into actions. It uses speech recognition technology to understand user instructions such as opening websites, searching information, displaying time, and performing simple tasks. The system provides a simple, interactive, and hands-free user experience.
