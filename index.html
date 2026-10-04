@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Speech Command Recognition</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎤 Speech Command Recognition</h1>
+
+    <p>Click the microphone and speak a command.</p>
+
+    <button id="micButton" onclick="startRecognition()">
+        🎤 Start Speaking
+    </button>
+
+    <div class="box">
+        <h3>Recognized Speech</h3>
+        <p id="speechText">Your speech will appear here...</p>
+    </div>
+
+    <div class="box">
+        <h3>Command Result</h3>
+        <p id="result">Waiting for command...</p>
+    </div>
+
+    <div class="commands">
+
+        <h3>Available Commands</h3>
+
+        <ul>
+            <li>"Hello"</li>
+            <li>"What is the time"</li>
+            <li>"Open Google"</li>
+            <li>"Open YouTube"</li>
+            <li>"Search Python"</li>
+            <li>"Clear"</li>
+        </ul>
+
+    </div>
+
+</div>
+
+<script>
+
+function startRecognition() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+
+        document.getElementById("result").innerText =
+            "Speech recognition is not supported. Please use Google Chrome.";
+
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-US";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    document.getElementById("result").innerText =
+        "Listening... 🎤";
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+
+        const speech =
+            event.results[0][0].transcript;
+
+        document.getElementById("speechText").innerText =
+            speech;
+
+        processCommand(speech.toLowerCase());
+    };
+
+    recognition.onerror = function(event) {
+
+        document.getElementById("result").innerText =
+            "Error: " + event.error;
+    };
+
+    recognition.onend = function() {
+
+        console.log("Speech recognition ended.");
+    };
+}
+
+
+function processCommand(command) {
+
+    if (command.includes("hello")) {
+
+        document.getElementById("result").innerText =
+            "Hello! How can I help you? 😊";
+
+    }
+
+    else if (
+        command.includes("time") ||
+        command.includes("what is the time")
+    ) {
+
+        const now = new Date();
+
+        const time = now.toLocaleTimeString();
+
+        document.getElementById("result").innerText =
+            "Current time: " + time;
+    }
+
+    else if (command.includes("open google")) {
+
+        document.getElementById("result").innerText =
+            "Opening Google...";
+
+        window.open("https://www.google.com", "_blank");
+    }
+
+    else if (command.includes("open youtube")) {
+
+        document.getElementById("result").innerText =
+            "Opening YouTube...";
+
+        window.open("https://www.youtube.com", "_blank");
+    }
+
+    else if (command.startsWith("search")) {
+
+        const searchText =
+            command.replace("search", "").trim();
+
+        if (searchText !== "") {
+
+            document.getElementById("result").innerText =
+                "Searching for: " + searchText;
+
+            window.open(
+                "https://www.google.com/search?q=" +
+                encodeURIComponent(searchText),
+                "_blank"
+            );
+        }
+
+        else {
+
+            document.getElementById("result").innerText =
+                "Please say what you want to search.";
+        }
+    }
+
+    else if (command.includes("clear")) {
+
+        document.getElementById("speechText").innerText =
+            "Your speech will appear here...";
+
+        document.getElementById("result").innerText =
+            "Cleared.";
+    }
+
+    else {
+
+        document.getElementById("result").innerText =
+            "Command not recognized: " + command;
+    }
+}
+
+</script>
+
+</body>
+</html>
